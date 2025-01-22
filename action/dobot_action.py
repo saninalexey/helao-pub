@@ -55,7 +55,7 @@ def move_linear_relative(x: float, y: float, z: float, r: float):
     retl.append(response)
     response = requests.get(f"{url}/dobotDriver/move_joint_relative", params=joint_parameters).json()
     retl.append(response)
-    return return_class(parameters=parameters, data=retl)
+    return return_class(parameters=parameters, data={i:retl[i] for i in range(len(retl))})
 
 @app.get("/dobot/setJointSpeed")
 def set_joint_speed(speed: int):
