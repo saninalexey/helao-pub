@@ -1,6 +1,5 @@
 
 import sys
-sys.path.append(r'../driver')
 import uvicorn
 from fastapi import FastAPI
 from pydantic import BaseModel

@@ -45,10 +45,7 @@ The currently implemented hardware is the following:
 | autolab         | Potentiostat                  | .net API                      | electrochemistry | Methrohm Autolab B.V.     | yes                   |
 | gamry           | Potentiostat                  | .dll for serial communication | electrochemistry | Gamry Instruments Inc.    | yes                   |
 | arbin           | Potentiostat                  | autohotkey                    | electrochemistry | Arbin Inc.                | no                    |
-| palmsens        | Potentiostat                  | .net API                      | electrochemistry | Palmsens B.V.             | yes                   |
-| pump            | pumping                       | serial commands               | liquid volume    | CAT  engineering GmbH     | no                    |
-| microlab        | pumping                       | TCP/IP                        | liquid volume    | Hamilton Company          | yes                   |
-| psd             | pumping                       | serial commands               | liquid volume    | Hamilton Company          | no                    |
+| pump            | pumping                       | serial commands               | n.a.             | CAT  engineering GmbH     | no                    |
 | arcoptix        | spectroscopy                  | .dll api                      | IR spectra       | arcoptix S.A.             | yes                   |
 | ocean           | spectroscopy Raman            | python package                | Raman spectra    | ocean insights GmbH       | yes                   |
 | force           | force sensing                 | serial commands               | force            | ME Meßsysteme GmbH        | n/a                   |

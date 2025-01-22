@@ -4,20 +4,17 @@ import json
 from pydantic import BaseModel
 from fastapi import FastAPI
 import uvicorn
-#from celery import group
-#import hdfdict
+from celery import group
+import hdfdict
 import os
 import requests
 import h5py
 from importlib import import_module
-from random import uniform
-import numpy as np
-from scipy.integrate import simpson
 helao_root = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 sys.path.append(helao_root)
 sys.path.append(os.path.join(helao_root, 'config'))
 config = import_module(sys.argv[1]).config
-from util import highestName, dict_address, hdf5_group_to_dict
+from util import highestName, dict_address,hdf5_group_to_dict
 serverkey = sys.argv[2]
 from contextlib import asynccontextmanager
 
@@ -35,14 +32,15 @@ class return_class(BaseModel):
     parameters :dict = None
     data: dict = None
 
-@asynccontextmanager
-async def app_lifespan(app: FastAPI):
-    global data
-    data = []
-    yield
+
+@app.on_event("startup")
+def memory():
+    global data 
+    data = {}
 
 @app.get("/analysis/receiveData")
-def receiveData(path: str, run: int, address: str):
+def receiveData(path:str,run:int,addresses:str):
+    addresses = json.loads(addresses)
     global data
     data = []
     try:

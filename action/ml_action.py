@@ -6,12 +6,7 @@ import json
 from pydantic import BaseModel
 from fastapi import FastAPI
 import uvicorn
-import numpy as np
-import pandas as pd
-from sklearn.ensemble import RandomForestRegressor
-import math
-from contextlib import asynccontextmanager
-#from celery import group
+from celery import group
 
 #from mischbares_small import config
 
@@ -19,6 +14,7 @@ helao_root = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 sys.path.append(helao_root)
 sys.path.append(os.path.join(helao_root, 'config'))
 sys.path.append(os.path.join(helao_root, 'driver'))
+
 
 from util import hdf5_group_to_dict
 from ml_driver import DataUtilSim
@@ -58,10 +54,10 @@ def receiveData(path: str, run: int, address: str, modelid: int = 0):
     #print("data.keys", data.keys())
     if modelid not in data.keys():
         data[modelid] = []
-    if modelid not in awaitedpoints.keys():
-        awaitedpoints[modelid] = []
+    #if modelid not in awaitedpoints.keys():
+    #    awaitedpoints[modelid] = []
     try:
-        address = json.loads(address) # multiple
+        address = json.dumps(address)
     except:
         address = [address]
     newdata = []
@@ -76,18 +72,18 @@ def receiveData(path: str, run: int, address: str, modelid: int = 0):
                 newdata.append(h5file[add][()])
             #print("newdata is", newdata) # why is that a list?
     data[modelid].append(newdata[0] if len(newdata) == 1 else newdata)
-    #print(f"newdata is {newdata}")
+    print(f"newdata is {newdata}")
     #if newdata['x'] in awaitedpoints[modelid]:
     #    awaitedpoints[modelid].remove(newdata['x'])
     #print("DATA is", data)
     #print("AP", awaitedpoints[modelid])
 
-'''@app.get("/ml/gaus_model")
+@app.get("/ml/gaus_model")
 def gaus_model(length_scale: int = 1, restart_optimizer: int = 10, random_state: int = 42):
     model = d.gaus_model(length_scale, restart_optimizer, random_state)
     retc = return_class(parameters={'length_scale': length_scale, 'restart_optimizer': restart_optimizer, 'random_state': random_state}, data={
                         'model': model})
-    return retc'''
+    return retc
 
 # we still need to discuss about the data type that we are adding here.
 
@@ -131,15 +127,14 @@ def active_learning_random_forest_simulation(name: str, num: int, query: str, ad
     #    sources = pickle.load(banana)
     # print(sources)
     global data
-    #print("data", data)
     dat = data[modelid]
-    #print("dat", dat)
     global awaitedpoints
     ap = awaitedpoints[modelid]
     beta = 0.4
     next_exp_dx, next_exp_dy = d.active_learning_random_forest_simulation_parallel(name, num, query, dat, json.dumps(ap), beta)
     awaitedpoints[modelid].append({'x':next_exp_dx, 'y':next_exp_dy})
     retc = return_class(parameters={'query': query, 'address': address, 'modelid': modelid}, data=dict(
+        next_x=next_exp_dx, next_y=next_exp_dy))
         next_x=next_exp_dx, next_y=next_exp_dy))
     return retc
 
